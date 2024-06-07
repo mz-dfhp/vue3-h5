@@ -1,0 +1,1 @@
+import{_ as e,c,o as s}from"./index-QhGk5OrW.js";const a={},o={class:"wrapper"};function t(r,_){return s(),c("div",o," slide ")}const d=e(a,[["render",t],["__scopeId","data-v-0abb4ac1"]]);export{d as default};
