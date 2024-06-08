@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
+const props = withDefaults(defineProps<{
+  total: number // 总数
+  list: Array<IItem>
+}>(), {
+  total: 20,
+  list: () => [],
+})
+
 interface IItem {
   index: number
   title: string
@@ -10,9 +18,7 @@ interface IItem {
 const wrapperRef = ref()
 const listRef = ref()
 
-const total = ref(0)
-const countList = ref<IItem[]>([])
-const list = ref<IItem[]>([])
+const countList = ref<IItem[]>([]) // 生成的count列表
 
 const middleIndex = ref(0) // 中间索引
 const activeIndex = ref(0) // 当前索引
@@ -33,7 +39,7 @@ function onTouchmove(e: TouchEvent) {
   if (activeIndex.value === 0 && moveY.value > 0)
     return console.log('上拉刷新')
   // 如果是最后一个 下滑不变
-  if (activeIndex.value === total.value - 1 && moveY.value < 0)
+  if (activeIndex.value === props.total - 1 && moveY.value < 0)
     return console.log('没有更多了')
   moveTo(moveY.value - activeIndex.value * wrapperHeight.value, 'none')
 }
@@ -52,7 +58,7 @@ function onTouchend() {
     }
     // 下一页
     if (moveY.value < 0) {
-      if (activeIndex.value === total.value - 1) {
+      if (activeIndex.value === props.total - 1) {
         console.log('没有更多了')
         return
       }
@@ -77,21 +83,21 @@ function loadData() {
 function changeList() {
   // 是否需要切换 增删
   if (shouldTogglePage()) {
-    const needRemoveFirst = activeIndex.value < list.value.length - middleIndex.value - 1
-    const needRemoveLast = activeIndex.value < list.value.length - middleIndex.value - 2
+    const needRemoveFirst = activeIndex.value < props.total - middleIndex.value - 1
+    const needRemoveLast = activeIndex.value < props.total - middleIndex.value - 2
     // 如果是上一页 删除最后一个 新增一个到开头
     if (moveY.value > 0 && needRemoveLast && (activeIndex.value >= middleIndex.value || activeIndex.value === middleIndex.value - 1)) {
       console.log('删后 增前')
       const index = activeIndex.value - middleIndex.value + 1
       countList.value.pop()
-      countList.value.unshift(list.value[index])
+      countList.value.unshift(props.list[index])
     }
     // 如果是下一页 删除第一个 新增一个到末尾
     if (moveY.value < 0 && needRemoveFirst && activeIndex.value >= middleIndex.value) {
       console.log('删前 增后')
       const index = activeIndex.value - middleIndex.value + countList.value.length
       countList.value.shift()
-      countList.value.push(list.value[index])
+      countList.value.push(props.list[index])
     }
   }
 }
@@ -107,13 +113,7 @@ function resetTouchValues() {
 }
 
 function init() {
-  list.value = [...Array(20)].map((_, index) => ({
-    index: index + 1,
-    title: `第${index + 1}个`,
-    background: randomColor(),
-  }))
-  total.value = list.value.length
-  countList.value = list.value.slice(0, Math.min(total.value, 5))
+  countList.value = props.list.slice(0, Math.min(props.total, 5))
   middleIndex.value = Math.floor(countList.value.length / 2)
 }
 
@@ -128,15 +128,10 @@ function shouldTogglePage() {
   return isMove || isFast
 }
 
-// 随机颜色
-function randomColor() {
-  return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`
-}
-
 function getTop() {
   if (activeIndex.value >= middleIndex.value) {
     const count = activeIndex.value - middleIndex.value + 1
-    const maxCount = list.value.length - 1 - middleIndex.value - 2
+    const maxCount = props.total - 1 - middleIndex.value - 2
     const result = Math.min(count, maxCount) * wrapperHeight.value
     return `${Math.max(result, 0)}px`
   }
@@ -163,7 +158,6 @@ onMounted(() => {
       >
         {{ item.title }}:
         <div>activeIndex：{{ activeIndex }}</div>
-        <div>middleIndex：{{ middleIndex }}</div>
       </div>
     </div>
   </div>

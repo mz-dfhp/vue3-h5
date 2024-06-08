@@ -18,6 +18,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/slide-demo',
+    name: 'slide-demo',
+    component: () => import('@/views/slide.demo.vue'),
+    meta: {
+      title: '滑动',
+    },
+  },
+  {
     path: '/waterfall',
     name: 'Waterfall',
     component: () => import('@/views/waterfall.vue'),
