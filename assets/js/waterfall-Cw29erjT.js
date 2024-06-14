@@ -1,1 +1,0 @@
-import{_ as e,a,c}from"./index-CK3bdsGx.js";const t={},r={class:"wrapper"};function s(o,_){return a(),c("div",r," waterfall ")}const l=e(t,[["render",s],["__scopeId","data-v-e23457b2"]]);export{l as default};
