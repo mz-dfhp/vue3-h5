@@ -12,14 +12,14 @@ const list = ref<IItem[]>([])
 const total = ref(0)
 
 function load() {
-    for (let i = 0; i < 40; i++) {
-      list.value.push({
-        index: i + 1,
-        title: `第${i + 1}个`,
-        background: randomColor(),
-      })
-    }
-    total.value = 40
+  for (let i = 0; i < 40; i++) {
+    list.value.push({
+      index: i + 1,
+      title: `第${i + 1}个`,
+      background: randomColor(),
+    })
+  }
+  total.value = 40
 }
 onMounted(() => {
   load()

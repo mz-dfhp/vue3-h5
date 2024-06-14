@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { randomColor } from '@/utils'
 
 interface IItem {
   index: number
@@ -58,42 +59,11 @@ function onTouchend() {
       }
       else {
         activeIndex.value++
-        if (activeIndex.value >= middleIndex.value) {
-          loadData()
-        }
       }
     }
   }
-  changeList()
   moveTo(-activeIndex.value * wrapperHeight.value, 'all 0.3s')
   resetTouchValues()
-}
-
-function loadData() {
-  // 需要加载数据
-  console.log('需要加载数据')
-}
-
-function changeList() {
-  // 是否需要切换 增删
-  if (shouldTogglePage()) {
-    const needRemoveFirst = activeIndex.value < list.value.length - middleIndex.value - 1
-    const needRemoveLast = activeIndex.value < list.value.length - middleIndex.value - 2
-    // 如果是上一页 删除最后一个 新增一个到开头
-    if (moveY.value > 0 && needRemoveLast && (activeIndex.value >= middleIndex.value || activeIndex.value === middleIndex.value - 1)) {
-      console.log('删后 增前')
-      const index = activeIndex.value - middleIndex.value + 1
-      countList.value.pop()
-      countList.value.unshift(list.value[index])
-    }
-    // 如果是下一页 删除第一个 新增一个到末尾
-    if (moveY.value < 0 && needRemoveFirst && activeIndex.value >= middleIndex.value) {
-      console.log('删前 增后')
-      const index = activeIndex.value - middleIndex.value + countList.value.length
-      countList.value.shift()
-      countList.value.push(list.value[index])
-    }
-  }
 }
 
 function moveTo(value: number, transition: string) {
@@ -128,18 +98,7 @@ function shouldTogglePage() {
   return isMove || isFast
 }
 
-// 随机颜色
-function randomColor() {
-  return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`
-}
-
 function getTop() {
-  if (activeIndex.value >= middleIndex.value) {
-    const count = activeIndex.value - middleIndex.value + 1
-    const maxCount = list.value.length - 1 - middleIndex.value - 2
-    const result = Math.min(count, maxCount) * wrapperHeight.value
-    return `${Math.max(result, 0)}px`
-  }
   return 0
 }
 

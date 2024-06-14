@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: '/',
-    redirect: '/slide-demo2',
+    redirect: '/index',
   },
   ...modulesRoutes,
 ]
