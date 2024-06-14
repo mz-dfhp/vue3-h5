@@ -8,7 +8,7 @@
 </template>
 
 <style scoped lang="scss">
-.wrapper{
+.wrapper {
   background: skyblue;
   height: 100%;
 }
