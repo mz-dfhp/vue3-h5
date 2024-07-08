@@ -1,1 +1,0 @@
-import{_ as e,o as c,c as a}from"./index-BwN2_Jze.js";const t={},r={class:"wrapper"};function o(s,_){return c(),a("div",r," waterfall ")}const d=e(t,[["render",o],["__scopeId","data-v-ddc54f96"]]);export{d as default};
