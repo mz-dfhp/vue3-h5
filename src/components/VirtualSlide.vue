@@ -100,7 +100,7 @@ function changeList() {
       const index = countList.value[0].index
       const findIndex = props.list.findIndex(item => item.index === index)
       countList.value.pop()
-      countList.value.unshift({ ...props.list[findIndex - 1], uuid: UUID() })
+      countList.value.unshift({ ...(findIndex !== -1 ? props.list[findIndex - 1] : {}), uuid: UUID() })
       itemTop.value -= wrapperHeight.value
     }
     // 如果是下一页 删除第一个 新增一个到末尾
@@ -111,7 +111,7 @@ function changeList() {
         const index = countList.value.slice(-1)[0].index
         const findIndex = props.list.findIndex(item => item.index === index)
         countList.value.shift()
-        countList.value.push({ ...props.list[findIndex + 1], uuid: UUID() })
+        countList.value.push({ ...(findIndex !== -1 ? props.list[findIndex + 1] : {}), uuid: UUID() })
         itemTop.value += wrapperHeight.value
       }
     }
