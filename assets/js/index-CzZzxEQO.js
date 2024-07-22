@@ -1,1 +1,0 @@
-import{d as n,o as t,c as s,F as o,r,u as c,t as p,m as _,_ as i}from"./index-BIHiBzaX.js";const d={class:"wrapper"},u=["onClick"],l=n({__name:"index",setup(m){return(a,h)=>(t(),s("div",d,[(t(!0),s(o,null,r(c(_),e=>(t(),s("button",{key:e.path,onClick:f=>a.$router.push(e.path)},p(e.path),9,u))),128))]))}}),x=i(l,[["__scopeId","data-v-aca235b2"]]);export{x as default};
