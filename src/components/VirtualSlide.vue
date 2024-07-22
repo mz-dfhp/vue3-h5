@@ -27,9 +27,9 @@ const activeIndex = ref(0) // 当前索引
 const startY = ref(0) // 开始位置
 const moveY = ref(0) // 移动距离
 const startTime = ref(0) // 开始时间
-const { winHeight } = useWindowResize()// 屏幕高度
+const { winHeight } = useWindowResize() // 屏幕高度
 
-const itemTop = computed(() => (activeIndex.value - 1) * winHeight.value)
+const itemTop = computed(() => Math.max(activeIndex.value - 1, 0) * winHeight.value)
 
 function onTouchstart(e: TouchEvent) {
   startY.value = e.touches[0].clientY
@@ -155,6 +155,34 @@ onMounted(() => {
   init()
   emit('updateActiveIndex', activeIndex.value)
 })
+// 上一页
+function onPre() {
+  if (activeIndex.value === 0)
+    return
+  onToIndex(activeIndex.value + 1)
+}
+// 下一页
+function onNext() {
+  if (activeIndex.value === props.total - 1)
+    return
+  onToIndex(activeIndex.value - 1)
+}
+
+function onToIndex(index: number) {
+  activeIndex.value = index
+  moveTo(-activeIndex.value * winHeight.value, 'all 0.3s')
+  changeList()
+  nextTick(() => {
+    emit('updateActiveIndex', activeIndex.value)
+  })
+  resetTouchValues()
+}
+
+defineExpose({
+  onPre,
+  onNext,
+  onToIndex,
+})
 </script>
 
 <template>
@@ -173,7 +201,7 @@ onMounted(() => {
         :key="item.uuid"
         class="item"
         :data-index="index + activeIndex"
-        :style="{ top: `${Math.max(itemTop, 0)}px` }"
+        :style="{ top: `${itemTop}px` }"
       >
         <slot
           :active-index="activeIndex"
