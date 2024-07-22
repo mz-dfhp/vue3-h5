@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { useWindowResize } from '@/hooks/useWindowResize'
 
 const props = withDefaults(defineProps<{
   count?: number
@@ -26,9 +27,9 @@ const activeIndex = ref(0) // 当前索引
 const startY = ref(0) // 开始位置
 const moveY = ref(0) // 移动距离
 const startTime = ref(0) // 开始时间
-const wrapperHeight = ref(document.documentElement.clientHeight) // 屏幕高度
+const { winHeight } = useWindowResize()// 屏幕高度
 
-const itemTop = ref(0)
+const itemTop = computed(() => (activeIndex.value - 1) * winHeight.value)
 
 function onTouchstart(e: TouchEvent) {
   startY.value = e.touches[0].clientY
@@ -49,7 +50,7 @@ function onTouchmove(e: TouchEvent) {
     console.log('没有更多了')
     return
   }
-  moveTo(moveY.value - activeIndex.value * wrapperHeight.value, 'none')
+  moveTo(moveY.value - activeIndex.value * winHeight.value, 'none')
 }
 
 function onTouchend() {
@@ -77,7 +78,7 @@ function onTouchend() {
       }
     }
   }
-  moveTo(-activeIndex.value * wrapperHeight.value, 'all 0.3s')
+  moveTo(-activeIndex.value * winHeight.value, 'all 0.3s')
   changeList()
   nextTick(() => {
     emit('updateActiveIndex', activeIndex.value)
@@ -101,7 +102,6 @@ function changeList() {
       const findIndex = props.list.findIndex(item => item.index === index)
       countList.value.pop()
       countList.value.unshift({ ...(findIndex !== -1 ? props.list[findIndex - 1] : {}), uuid: UUID() })
-      itemTop.value -= wrapperHeight.value
     }
     // 如果是下一页 删除第一个 新增一个到末尾
     if (moveY.value < 0 && activeIndex.value > 1) {
@@ -112,7 +112,6 @@ function changeList() {
         const findIndex = props.list.findIndex(item => item.index === index)
         countList.value.shift()
         countList.value.push({ ...(findIndex !== -1 ? props.list[findIndex + 1] : {}), uuid: UUID() })
-        itemTop.value += wrapperHeight.value
       }
     }
   }
@@ -129,7 +128,6 @@ function resetTouchValues() {
 }
 
 function init() {
-  itemTop.value = 0
   activeIndex.value = 0
   countList.value = props.list.slice(0, Math.min(props.total, props.count)).map(item => ({ ...item, uuid: UUID() }))
 }
@@ -141,7 +139,7 @@ function shouldTogglePage() {
   const speed = Math.abs(moveY.value) / duration
   const isFast = speed > 0.5
   // 滑动距离超过主容器二分之一
-  const isMove = Math.abs(moveY.value) > wrapperHeight.value / 2
+  const isMove = Math.abs(moveY.value) > winHeight.value / 2
   return isMove || isFast
 }
 
